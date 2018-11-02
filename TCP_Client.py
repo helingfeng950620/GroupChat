@@ -9,20 +9,29 @@ class GroupChatClient:
         self.event = threading.Event()
 
     def start(self):
-        """Connect remote address, be receive to accept and send message"""
+        """
+        Connect remote address,
+        be receive to accept and send message
+        """
         self.sock.connect(self.address)
         threading.Thread(target=self.read, name='read', daemon=True).start()
         threading.Thread(target=self.write, name='write', daemon=True).start()
         threading.Thread(target=self.quit, name='quit').start()
 
     def read(self):
-        """Be ready to receive message, it will block on function socket.recv()."""
+        """
+        Be ready to receive message,
+        it will block on function socket.recv().
+        """
         while True:
             data = self.sock.recv(1024)
             print('{}'.format(data.decode()))
 
     def write(self):
-        """Be ready to send message, it will block on function input()."""
+        """
+        Be ready to send message,
+        it will block on function input().
+        """
         while True:
             message = input('>>>')
             if message == 'quit':
@@ -31,8 +40,11 @@ class GroupChatClient:
             self.sock.send(message.encode())
 
     def quit(self):
-        """Keep main thread alive in order to keep read and write thread alive,
-        when it finish, read and write thread are finish too because they are daemon thread."""
+        """
+        Keep main thread alive in order to keep read and write thread alive,
+        when it finish,
+        read and write thread are finish too because they are daemon thread.
+        """
         self.event.wait()
         print('U have quitted group chat.')
 

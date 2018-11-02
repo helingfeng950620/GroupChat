@@ -13,9 +13,11 @@ class GroupChatServer:
 
     @staticmethod
     def getlogger():
-        """Create a logger object for each GroupChatServer object
+        """
+        Create a logger object for each GroupChatServer object
         but it looks useless in my project.
-        I just want to practise using logging module."""
+        I just want to practise using logging module.
+        """
         formatter = logging.Formatter('%(asctime)s %(message)s')
         handler = logging.StreamHandler()
         handler.setLevel(logging.INFO)
@@ -28,14 +30,18 @@ class GroupChatServer:
         return log
 
     def start(self):
-        """Create anther thread, which is use to accept connection from client.
-        The main thread will not block."""
+        """Create anther thread,
+        which is use to accept connection from client.
+        The main thread will not block.
+        """
         threading.Thread(target=self.terminate, name='terminate').start()
         threading.Thread(target=self.accept, name='accept', daemon=True).start()
 
     def accept(self):
-        """Use to accept connections of clients
-        until GroupChatServer object calls terminate function."""
+        """
+        Use to accept connections of clients
+        until GroupChatServer object calls terminate function.
+        """
         with socket.socket() as s:
             s.bind(self.address)
             s.listen()
@@ -52,8 +58,10 @@ class GroupChatServer:
                                  daemon=True).start()
 
     def receive(self, client: socket.socket, caddr: tuple):
-        """Create a thread is ready to receive client's message.
-        each client has his own receive thread (start in accept function)."""
+        """
+        Create a thread is ready to receive client's message.
+        each client has his own receive thread (start in accept function).
+        """
         with client:
             while True:
                 try:
@@ -62,7 +70,7 @@ class GroupChatServer:
                         self.quit(caddr)
                         break
                     message = '{}: {}'.format(caddr[1], data.decode(encoding='utf8'))
-                    print('{}'.format(message))  # 测试用的, 服务端不需要显示信息
+                    # print('{}'.format(message))  # 测试用的, 服务端不需要显示信息
                     for a, c in self.group.items():
                         if a == caddr:
                             continue
@@ -72,6 +80,11 @@ class GroupChatServer:
                     break
 
     def quit(self, caddr):
+        """
+        When client sends 'quit' or terminates the connection,
+        this function will be called,
+        in order kick the client out from the group and notice another clients.
+        """
         message = 'Client {}:{} is quit.'.format(caddr[0], caddr[1])
         self.log.info(message)
 
